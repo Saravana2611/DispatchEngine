@@ -25,6 +25,7 @@ class Distributor
         void checkForNewWorker();
     
     private:
+        bool validateRegisterMsg(std::string buffer);
         std::vector<Worker> workersDetails;
         int registerFdRead_;
 };

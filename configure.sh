@@ -5,9 +5,3 @@ echo "CMake Build is successful"
 echo "Starting build"
 make -C build/
 echo "Build is successful"
-
-echo "Running Distributor"
-echo
-echo
-echo
-./build/src/Distributor/Distributor

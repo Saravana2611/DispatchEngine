@@ -21,17 +21,29 @@ void Distributor::checkForNewWorker()
 {
     std::cout << "calling checkForNewWorker" << std::endl;
 
-    char buffer[BUFFER_SIZE];
-    auto noOfBytesRead = read(registerFdRead_, buffer, sizeof(buffer));
+    std::string buffer(BUFFER_SIZE, '\0');
+    auto noOfBytesRead = read(registerFdRead_, &buffer[0], buffer.size());
     
-    if (noOfBytesRead > 0)
+    if (noOfBytesRead <= 0)
     {
-        std::cout << buffer << std::endl;
+        std::cout << "Buffer is empty" << std::endl;
+        return;    
     }
-    else
+
+    buffer.resize(noOfBytesRead);
+    std::cout << "Buffer = " << Buffer;
+    if (not validateRegisterMsg(buffer))
     {
-        std::cout << "buffer is empty" << std::endl;
+        std::cout << "Register Message Validation Failed" << std::endl;
+        return;
     }
+
+}
+
+bool Distributor::validateRegisterMsg(std::string buffer)
+{
+    std::string request = buffer.substr(0, buffer.find(" "));
+    return request == "REGISTER";
 }
 
 Distributor::~Distributor()

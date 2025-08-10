@@ -40,7 +40,7 @@ void checkForNewWorker(const std::unique_ptr<Distributor>& distributor)
 
     distributor->checkForNewWorker();
 
-    shiftToNextState(currentState, States::ECheckForNewRequest);
+    shiftToNextState(currentState, States::ECheckForNewWorker);
 }
 
 void checkForNewRequest(const std::unique_ptr<Distributor>& distributor)
