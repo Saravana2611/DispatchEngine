@@ -31,19 +31,39 @@ void Distributor::checkForNewWorker()
     }
 
     buffer.resize(noOfBytesRead);
-    std::cout << "Buffer = " << Buffer;
+    std::cout << "Buffer = " << buffer << std::endl;
     if (not validateRegisterMsg(buffer))
     {
         std::cout << "Register Message Validation Failed" << std::endl;
         return;
     }
 
+    std::string workerUid = getWorkerUid(buffer);
+    registerWorker(workerUid);
 }
 
-bool Distributor::validateRegisterMsg(std::string buffer)
+bool Distributor::validateRegisterMsg(const std::string& buffer)
 {
     std::string request = buffer.substr(0, buffer.find(" "));
-    return request == "REGISTER";
+    std::string uid = buffer.substr(buffer.find(" ") + 1, std::distance(buffer.begin(), buffer.end()));
+    return (request == "REGISTER") and (uid.size() > 0);
+}
+
+std::string Distributor::getWorkerUid(const std::string& buffer)
+{
+    return buffer.substr(buffer.find(" ") + 1, std::distance(buffer.begin(), buffer.end()));
+}
+
+void Distributor::registerWorker(const std::string& workerUid)
+{
+    Worker worker;
+    worker.uid = workerUid;
+    worker.readFifo = "/tmp/DispatchEngine/WorkerComm/read_" + workerUid;
+    worker.writeFifo = "/tmp/DispatchEngine/WorkerComm/work_" + workerUid;
+    worker.status = EWorkerStatus::EIdle;
+    workersDetails_[workerUid] = worker;
+
+    idleQueue_.push(worker);
 }
 
 Distributor::~Distributor()

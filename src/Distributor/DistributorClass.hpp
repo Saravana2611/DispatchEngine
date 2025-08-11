@@ -1,9 +1,11 @@
 #include <iostream>
 #include <vector>
+#include <map>
+#include <queue>
 
 const int BUFFER_SIZE = 100;
 
-enum WorkerStatus
+enum EWorkerStatus
 {
     EBusy,
     EIdle,
@@ -12,9 +14,9 @@ enum WorkerStatus
 
 struct Worker
 {
-    std::string type;
-    int uuid;
-    WorkerStatus status;
+    std::string uid;
+    std::string readFifo, writeFifo;
+    EWorkerStatus status;
 };
 
 class Distributor
@@ -25,7 +27,11 @@ class Distributor
         void checkForNewWorker();
     
     private:
-        bool validateRegisterMsg(std::string buffer);
-        std::vector<Worker> workersDetails;
+        bool validateRegisterMsg(const std::string& buffer);
+        std::string getWorkerUid(const std::string& buffer);
+        void registerWorker(const std::string& workerUid);
+        
         int registerFdRead_;
+        std::map<std::string, Worker> workersDetails_;
+        std::queue<Worker> idleQueue_;
 };
